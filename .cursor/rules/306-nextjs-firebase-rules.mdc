@@ -1,0 +1,43 @@
+---
+description: Next.js 15, Firebase, Shadcn UI 개발 규칙
+globs: **/*.{ts,tsx,js,jsx}
+alwaysApply: false
+---
+# Next.js 15 & Firebase Development Rules
+
+## Core Principles
+- **App Router First**: Use the `app/` directory structure. Prefer Server Components (`RSC`) by default.
+- **Client Components**: Add `'use client'` only when necessary (hooks, interactivity).
+- **Data Fetching**: Use `await` in Server Components directly. Use Firebase Admin SDK on server, Client SDK on client.
+
+## Styling & UI
+- Use **Tailwind CSS** for layout and styling.
+- Use **Shadcn UI** components for consistent design.
+- Combine classes using `cn()` utility (clsx + tailwind-merge).
+- **Icons**: Use Lucide React icons.
+
+## Forms & Validation
+- Use **React Hook Form** for form state management.
+- Define schemas with **Zod** and infer types: `type FormValues = z.infer<typeof formSchema>`.
+
+## AI Integration (Genkit)
+- Implement Genkit flows in server-side API routes or Server Actions.
+- Secure API keys using environment variables.
+
+## File Naming
+- Components: `PascalCase.tsx`
+- Utilities: `kebab-case.ts` or `camelCase.ts`
+- Pages: `page.tsx`, `layout.tsx`, `loading.tsx`
+
+## Example: Server Action
+```typescript
+'use server'
+import { z } from 'zod'
+
+const schema = z.object({ ... })
+
+export async function myAction(formData: FormData) {
+  const validated = schema.parse(...)
+  // Firebase Admin Logic
+}
+```
