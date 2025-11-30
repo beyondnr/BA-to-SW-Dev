@@ -15,13 +15,13 @@
   - 증빙 자동 보관·내보내기로 분쟁 시 근거 제출 성공률 100%, 불안감 자체보고 지수 4.0→1.5.
 * **성공 지표 (북극성/보조 KPI):**
 
-| KPI | Baseline (Manual·인터뷰) | Target (MVP v1) | Measurement / Cadence |
-| --- | --- | --- | --- |
-| 법규 준수 완료율 (위반 없는 급여 사이클 비중) | 63% (월 3.2건 오류) | ≥98% | Compliance rule engine 로그, 월별 감사 리포트 |
-| 온보딩 10분 내 완료율 | 18% (Excel 템플릿) | ≥70% | Product analytics funnel (가입→매장→스케줄) |
-| 승인 리드타임 (요청→승인) | 48h 평균 | ≤6h, p90 ≤12h | 스케줄 이벤트 타임스탬프, 주간 |
-| 증빙 내보내기 활용률 | 5% (수기/종이) | ≥50% | Audit log export 이벤트/급여 사이클, 월간 |
-| 경고 대응률 (24h 내 해결) | 0% (사전 경고 부재) | ≥80% | Rule violation alert + Resolve status, 주간 |
+| KPI                                           | Baseline (Manual·인터뷰) | Target (MVP v1) | Measurement / Cadence                         |
+| --------------------------------------------- | ------------------------- | --------------- | --------------------------------------------- |
+| 법규 준수 완료율 (위반 없는 급여 사이클 비중) | 63% (월 3.2건 오류)       | ≥98%           | Compliance rule engine 로그, 월별 감사 리포트 |
+| 온보딩 10분 내 완료율                         | 18% (Excel 템플릿)        | ≥70%           | Product analytics funnel (가입→매장→스케줄) |
+| 승인 리드타임 (요청→승인)                    | 48h 평균                  | ≤6h, p90 ≤12h | 스케줄 이벤트 타임스탬프, 주간                |
+| 증빙 내보내기 활용률                          | 5% (수기/종이)            | ≥50%           | Audit log export 이벤트/급여 사이클, 월간     |
+| 경고 대응률 (24h 내 해결)                     | 0% (사전 경고 부재)       | ≥80%           | Rule violation alert + Resolve status, 주간   |
 
 ## 2. 사용자와 페르소나
 
@@ -33,6 +33,7 @@
 ## 3. 사용자 스토리와 수용 기준 (AC)
 
 ### Story 1 — 준법 급여 운영
+
 As a risk-averse bakery owner, I want all allowances auto-calculated so that I can pay "법대로" without anxiety.
 
 - AC1: Given 직원이 모바일 폼으로 주간 가용 시간을 제출하고 근로시간이 누적되었을 때, When 내가 '미리보기' 버튼을 누르면, Then 시스템이 주휴/연장/야간/휴일 수당을 p99 정확도 99.5% 이상으로 계산하고 차이를 색상으로 표시한다.
@@ -41,6 +42,7 @@ As a risk-averse bakery owner, I want all allowances auto-calculated so that I c
 - AC4 (실패 케이스): Given 직원 입력이 누락되거나 중복된 경우, When 시스템이 모순을 감지하면, Then 알림(SMS/Kakao)으로 직원에게 30분 내 재입력을 요청하고 승인 플로우를 블록한다.
 
 ### Story 2 — 1클릭 스케줄 승인
+
 As a low-tech restaurant owner, I want to approve consolidated shifts in one tap so that 운영 피로도를 줄인다.
 
 - AC1: Given 최소 70% 직원이 모바일 링크를 통해 가용 시간을 제출했을 때, When 내가 사장 모드 대시보드를 열면, Then "승인 대기" 카드가 3단계(검토→조정→공지)로 표시되고 각 단계가 2초 내 로딩된다.
@@ -49,17 +51,17 @@ As a low-tech restaurant owner, I want to approve consolidated shifts in one tap
 
 ## 4. 기능 요구사항 (Functional, MSCW)
 
-| ID | MSCW | Requirement | 성공/근거 | 의존성 |
-| --- | --- | --- | --- | --- |
-| F-01 | Must | 3단계 온보딩(가입→매장 설정→첫 스케줄) 마법사 | 70% 10분 내 완료, Excel 대비 4.5배 빠름 | SMS 인증, 매장 템플릿 DB |
-| F-02 | Must | 직원 모바일 가용시간 제출 폼 (QR/링크) | 참여율 ≥80%, 비로그인 제출 허용 | Short-link, 간편 본인확인 |
-| F-03 | Must | 사장 1클릭 승인·공지 플로우 | 승인 리드타임 48h→6h, 대체 Excel 대비 8배 빠름 | Notification service |
-| F-04 | Must | 노동법 준수 규칙 엔진 + 위반 경고 | 위반 사전 차단율 95% | 규칙 테이블, 노무사 검증 |
-| F-05 | Must | 자동 급여/수당 계산 + 증빙 PDF/엑셀 | 오류율 ≤0.5%, 분쟁 증빙 제출 100% | 계산 모듈, 템플릿 엔진 |
-| F-06 | Should | 변경 이력 Audit Log & 서명 추적 | 사건별 로그 100% 캡처, SHA256 서명 | Object storage |
-| F-07 | Should | 간소 리포트 & 오프라인 출력 뷰 | 출력 요청 30초 내 생성, 점포 벽부착 대응 | Print-friendly CSS |
-| F-08 | Could | 출퇴근 기록 기본 연동(수기 입력/사진) | 급여 정합성 ±2% 유지 | OCR/Photo upload |
-| F-09 | Won't (v1) | POS/급여 솔루션 API 통합 | 후속 로드맵 | 외부 벤더 계약 필요 |
+| ID   | MSCW       | Requirement                                     | 성공/근거                                       | 의존성                    |
+| ---- | ---------- | ----------------------------------------------- | ----------------------------------------------- | ------------------------- |
+| F-01 | Must       | 3단계 온보딩(가입→매장 설정→첫 스케줄) 마법사 | 70% 10분 내 완료, Excel 대비 4.5배 빠름         | SMS 인증, 매장 템플릿 DB  |
+| F-02 | Must       | 직원 모바일 가용시간 제출 폼 (QR/링크)          | 참여율 ≥80%, 비로그인 제출 허용                | Short-link, 간편 본인확인 |
+| F-03 | Must       | 사장 1클릭 승인·공지 플로우                    | 승인 리드타임 48h→6h, 대체 Excel 대비 8배 빠름 | Notification service      |
+| F-04 | Must       | 노동법 준수 규칙 엔진 + 위반 경고               | 위반 사전 차단율 95%                            | 규칙 테이블, 노무사 검증  |
+| F-05 | Must       | 자동 급여/수당 계산 + 증빙 PDF/엑셀             | 오류율 ≤0.5%, 분쟁 증빙 제출 100%              | 계산 모듈, 템플릿 엔진    |
+| F-06 | Should     | 변경 이력 Audit Log & 서명 추적                 | 사건별 로그 100% 캡처, SHA256 서명              | Object storage            |
+| F-07 | Should     | 간소 리포트 & 오프라인 출력 뷰                  | 출력 요청 30초 내 생성, 점포 벽부착 대응        | Print-friendly CSS        |
+| F-08 | Could      | 출퇴근 기록 기본 연동(수기 입력/사진)           | 급여 정합성 ±2% 유지                           | OCR/Photo upload          |
+| F-09 | Won't (v1) | POS/급여 솔루션 API 통합                        | 후속 로드맵                                     | 외부 벤더 계약 필요       |
 
 ## 5. 비기능 요구사항 (NFR)
 
@@ -116,4 +118,3 @@ As a low-tech restaurant owner, I want to approve consolidated shifts in one tap
 - `Analysis/9._SaaS_Employee_Schedule_Management_Service_JTBD_Interview_Summary_Card.md` — JTBD 진술과 원하는 Outcome, 오류/시간 지표.
 - `Analysis/8._SaaS_Employee_Schedule_Management_Service_Market_AOS-DOS_Matrix_and_Comprehensive_Evaluation_Table.md` — AOS/DOS 4.0 측정값과 차별 가치.
 - 고용노동부 2024 상반기 임금체불 통계 (임금체불액 1조 원) — 규제 위험 근거.
-
